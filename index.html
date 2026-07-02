@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biological Psychology MCQ Quiz v7.1</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eef2f3;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .designer-tag {
+            text-align: center;
+            background: #1a252f;
+            color: #ecf0f1;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 0;
+            letter-spacing: 1px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 { margin: 0; font-size: 20px; }
+        .header p { margin: 5px 0 10px; font-size: 13px; opacity: 0.9; }
+
+        #timer-box {
+            background-color: rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        /* Registration Box */
+        #reg-box {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .input-field {
+            width: 80%;
+            padding: 12px;
+            margin: 15px 0;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+        }
+        .start-btn {
+            background-color: var(--success-color);
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        #quiz-area { display: none; }
+
+        /* Question Grid Style */
+        .q-navigation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            justify-content: center;
+        }
+
+        .q-nav-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #ccc;
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .q-nav-btn.active { background-color: var(--secondary-color); color: white; border-color: var(--secondary-color); }
+        .q-nav-btn.answered { background-color: #e0f0fa; border-color: var(--secondary-color); }
+        .q-nav-btn.unanswered-alert { background-color: #fce8e6 !important; border: 2px solid var(--danger-color) !important; color: var(--danger-color); }
+        .q-nav-btn.correct-nav { background-color: #d4edda !important; border-color: var(--success-color) !important; color: #155724; }
+        .q-nav-btn.incorrect-nav { background-color: #f8d7da !important; border-color: var(--danger-color) !important; color: #721c24; }
+
+        .quiz-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: none;
+        }
+        .quiz-card.active { display: block; }
+
+        .question-text { font-size: 17px; font-weight: 600; margin-bottom: 20px; color: var(--primary-color); }
+        .options-container { display: flex; flex-direction: column; gap: 12px; }
+        .option-label { display: flex; align-items: center; padding: 14px 15px; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; font-size: 15px; }
+        .option-label:hover { background-color: var(--light-bg); border-color: var(--secondary-color); }
+        .option-label input { margin-right: 12px; transform: scale(1.2); }
+
+        .nav-controls { display: flex; justify-content: space-between; margin-top: 20px; gap: 15px; }
+        .control-btn { flex: 1; padding: 12px; font-size: 16px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; background-color: var(--primary-color); color: white; }
+        .control-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        #submit-btn { background-color: var(--success-color); }
+
+        .correct { background-color: #d4edda !important; border-color: var(--success-color) !important; color: #155724; font-weight: 600; }
+        .incorrect { background-color: #f8d7da !important; border-color: var(--danger-color) !important; color: #721c24; }
+        
+        .explanation { margin-top: 20px; padding: 15px; background-color: #e8f4fd; border-left: 4px solid var(--secondary-color); border-radius: 4px; font-size: 14px; display: none; }
+
+        #result-summary { background: white; padding: 30px; border-radius: 8px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: none; }
+        #score-display { font-size: 42px; font-weight: bold; color: var(--secondary-color); margin: 10px 0; }
+        
+        .alert-banner { background-color: #fce8e6; color: #c5221f; padding: 12px; border-radius: 6px; margin-bottom: 15px; font-weight: 600; text-align: center; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="designer-tag">Design by KUMARA</div>
+
+    <div class="header">
+        <h1>1.3 - Biological Psychology (මනෝවිද්‍යාවේ ජීවවිද්‍යාත්මක පදනම)</h1>
+        <p>EB Examination III Preparation - 2026 | Prepared by Wickramananda Kuruppu</p>
+        <div id="timer-box" style="display:none;">ඉතිරි කාලය: <span id="timer">60:00</span></div>
+    </div>
+
+    <div class="container">
+        <!-- Registration Box -->
+        <div id="reg-box">
+            <h2>Quiz එක ආරම්භ කිරීම</h2>
+            <p>කරුණාකර ඔබගේ සම්පූර්ණ නම ඇතුළත් කරන්න:</p>
+            <input type="text" id="candidate-name" class="input-field" placeholder="ඔබේ නම මෙතන ලියන්න..." required>
+            <br>
+            <button class="start-btn" onclick="startQuiz()">Start Quiz (ආරම්භ කරන්න)</button>
+        </div>
+
+        <div id="quiz-area">
+            <div class="alert-banner" id="validation-alert">ඔබ ප්‍රශ්න කිහිපයක් මඟහැර ඇත! දැන් ඔබට දැකගත හැක්කේ මඟහැරුණු ප්‍රශ්න පමණි. ඒවාට පිළිතුරු සපයා නැවත Submit කරන්න.</div>
+
+            <!-- Results Summary Box -->
+            <div id="result-summary">
+                <h2>ප්‍රතිඵල සාරාංශය (Quiz Summary)</h2>
+                <div id="time-taken-display">ඔබට ගත වූ කාලය: --:--</div>
+                <div id="score-display">ලකුණු: 0 / 59</div>
+                <p id="feedback-text"></p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size:14px; color:#666;">ප්‍රශ්න අංක මත ක්ලික් කර නිවැරදි පිළිතුරු සහ විස්තර බලන්න.</p>
+            </div>
+
+            <div class="q-navigation" id="q-nav-grid"></div>
+
+            <form id="quiz-form" onsubmit="submitQuiz(event)">
+                <div id="questions-wrapper"></div>
+                <div class="nav-controls">
+                    <button type="button" class="control-btn" id="prev-btn" onclick="changeQuestion(-1)">← Previous</button>
+                    <button type="button" class="control-btn" id="next-btn" onclick="changeQuestion(1)">Next →</button>
+                    <button type="submit" class="control-btn" id="submit-btn" style="display: none;">Submit Quiz (අවසන් කරන්න)</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // !!! වැදගත්: ඔබේ GOOGLE APPS SCRIPT WEB APP URL එක පහතින් ඇතුළත් කරන්න !!!
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw0D2C63uezn9omJKIjFRhLSER7dXY66XmUzhdz_LT7eaILGDkFo8Qj4PFZvHlrRGSj/exec";
+
+        const quizData = [
+            { q: "1. Biological Psychology ප්‍රධාන වශයෙන් අධ්‍යයනය කරන්නේ කුමක්ද?", a: ["Culture", "Behaviour and biological processes", "Economics", "Politics"], correct: 1, exp: "Biological Psychology කියන්නේ අපගේ behaviour හා biological processes අතර සම්බන්ධතාවය අධ්‍යයනය කරන අංශයයි." },
+            { q: "2. Nervous System හි මූලික ඒකකය කුමක්ද?", a: ["Hormone", "Synapse", "Neuron", "Gland"], correct: 2, exp: "Neuron යනු nervous system එකේ basic unit එකයි." },
+            { q: "3. Dendrites වල ප්‍රධාන කාර්යය කුමක්ද?", a: ["Messages send කිරීම", "Messages receive කිරීම", "Hormones produce කිරීම", "Memory store කිරීම"], correct: 1, exp: "Short - Dendrites signals receive කරනවා." },
+            { q: "4. Axon හි කාර්යය කුමක්ද?", a: ["Receive signals", "Process emotions", "Carry signals", "Store memories"], correct: 2, exp: "Axon signals carry කරයි." },
+            { q: "5. Myelin Sheath හි වැදගත්කම කුමක්ද?", a: ["Memory improve කිරීම", "Signal speed increase කිරීම", "Emotion control කිරීම", "Hormone production"], correct: 1, exp: "Myelin sheath signal transmission speed වැඩි කරයි." },
+            { q: "6. Neural Communication යනු,", a: ["Hormone secretion", "Neurons අතර communication", "Digestion", "Respiration"], correct: 1, exp: "Neurons අතර information exchange වීම neural communication ලෙස හැඳින්වේ." },
+            { q: "7. Action Potential යනු,", a: ["Chemical messenger", "Hormone", "Electrical impulse", "Gland"], correct: 2, exp: "Action potential යනු neuron තුළ ගමන් කරන electrical impulse එකයි." },
+            { q: "8. Synapse යනු,", a: ["Brain region", "Hormone", "Neuron gap", "Reflex"], correct: 2, exp: "Neuron දෙකක් අතර ඇති කුඩා gap එක synapse ලෙස හැඳින්වේ." },
+            { q: "9. Neurotransmitters යනු,", a: ["Electrical impulses", "Chemical messengers", "Brain lobes", "Hormones only"], correct: 1, exp: "Neurotransmitters යනු neurons අතර messages transmit කරන chemical messengers වේ." },
+            { q: "10. Reward system සමඟ වඩාත් සම්බන්ධ neurotransmitter එක කුමක්ද?", a: ["GABA", "Dopamine", "Serotonin", "Cortisol"], correct: 1, exp: "Dopamine reward, pleasure, motivation සමඟ සම්බන්ධයි. Addiction සමඟ strong relationship ඇත." },
+            { q: "11. Mood regulation සමඟ වඩාත් සම්බන්ධ neurotransmitter එක වන්නේ,", a: ["Dopamine", "GABA", "Serotonin", "Adrenaline"], correct: 2, exp: "Serotonin mood regulation, emotional stability සහ happiness සමඟ සම්බන්ධයි. Low serotonin -> Depression සමඟ සම්බන්ධ විය හැක." },
+            { q: "12. Anxiety reduction සමඟ සම්බන්ධ neurotransmitter එක,", a: ["GABA", "Dopamine", "Serotonin", "Acetylcholine"], correct: 0, exp: "GABA inhibitory neurotransmitter එකකි. මෙය brain activity calm කරයි." },
+            { q: "13. CNS හි අඩංගු වන්නේ,", a: ["Brain only", "Spinal Cord only", "Brain and Spinal Cord", "Nerves only"], correct: 2, exp: "CNS = Central Nervous System. මෙයට අයත්: Brain, Spinal Cord" },
+            { q: "14. PNS යනු ,", a: ["Brain", "Spinal Cord", "Peripheral nerves", "Cortex"], correct: 2, exp: "PNS = Peripheral Nervous System. Brain සහ spinal cord වලින් පිටත nerves." },
+            { q: "15. Voluntary actions control කරන්නේ,", a: ["Autonomic system", "Somatic system", "Limbic system", "Endocrine system"], correct: 1, exp: "Voluntary actions = අපේ කැමැත්තෙන් කරන actions. මේවා control කරන්නේ Somatic System." },
+            { q: "16. Involuntary actions control කරන්නේ,", a: ["Somatic", "Autonomic", "Sensory", "Motor"], correct: 1, exp: "Involuntary actions = automatic body functions. (Heartbeat, Digestion, Breathing)" },
+            { q: "17. Fight or Flight response activate කරන්නේ,", a: ["Parasympathetic", "Sympathetic", "Somatic", "Limbic"], correct: 1, exp: "Danger situation එකකදී body එක emergency mode එකට දාන system එක Sympathetic Nervous System." },
+            { q: "18. Rest and Digest response පාලනය කරන්නේ,", a: ["Sympathetic", "Parasympathetic", "CNS", "PNS"], correct: 1, exp: "Body relax කරලා recovery mode එකට දාන system එක Parasympathetic." },
+            { q: "19. Brain හි survival functions සමඟ සම්බන්ධ කොටස,", a: ["Forebrain", "Hindbrain", "Cortex", "Limbic"], correct: 1, exp: "Hindbrain basic survival functions control කරයි. (Breathing, Heart rate, Balance)" },
+            { q: "20. Higher mental functions සඳහා වගකියන්නේ,", a: ["Hindbrain", "Midbrain", "Forebrain", "Spinal cord"], correct: 2, exp: "Forebrain higher mental functions සඳහා වැදගත්. (Thinking, Decision making, Problem solving, Memory)" },
+            { q: "21. Planning හා decision making සමඟ සම්බන්ධ lobe එක,", a: ["Occipital", "Temporal", "Frontal", "Parietal"], correct: 2, exp: "Frontal Lobe higher cognitive functions සඳහා වැදගත්. (Planning, Decision Making, Problem Solving)" },
+            { q: "22. Vision සමඟ සම්බන්ධ lobe එක,", a: ["Frontal", "Temporal", "Parietal", "Occipital"], correct: 3, exp: "Occipital Lobe visual information process කරයි." },
+            { q: "23. Memory formation සමඟ වඩාත් සම්බන්ධ structure එක වන්නේ,", a: ["Amygdala", "Hippocampus", "Thalamus", "Cerebellum"], correct: 1, exp: "Hippocampus memory formation සඳහා ඉතා වැදගත්." },
+            { q: "24. Fear response සමඟ සම්බන්ධ structure එක,", a: ["Amygdala", "Cortex", "Thyroid", "Pons"], correct: 0, exp: "Amygdala fear, danger detection සහ emotional reactions සමඟ සම්බන්ධයි." },
+            { q: "25. Stress hormone එක ලෙස හැඳින්වෙන්නේ,", a: ["Dopamine", "Serotonin", "Cortisol", "GABA"], correct: 2, exp: "Cortisol stress hormone ලෙස හැඳින්වේ. Long-term high cortisol -> Chronic stress" },
+            { q: "26. මස්තිෂ්ක බාහිකය (Cerebral Cortex) ප්‍රධාන වශයෙන් සම්බන්ධ වන්නේ ,", a: ["ආහාර ජීර්ණය", "උසස් මානසික ක්‍රියාවලීන්", "රුධිර සංසරණය", "හෝමෝන නිපදවීම"], correct: 1, exp: "Cerebral Cortex higher mental processes සඳහා වැදගත්. (Thinking, Language, Memory)" },
+            { q: "27. පෙනීම (Vision) සම්බන්ධ තොරතුරු සැකසීම සිදුවන්නේ ,", a: ["Frontal Lobe", "Temporal Lobe", "Occipital Lobe", "Parietal Lobe"], correct: 2, exp: "Vision = Occipital Lobe" },
+            { q: "28. ඇසීම (Hearing) හා මතකය (Memory) සමඟ වඩාත් සම්බන්ධ කොටස වන්නේ ,", a: ["Temporal Lobe", "Occipital Lobe", "Frontal Lobe", "Cerebellum"], correct: 0, exp: "Temporal Lobe hearing, language comprehension සහ memory සමඟ සම්බන්ධයි." },
+            { q: "29. සංවේදන (Sensory) තොරතුරු සැකසීම සමඟ සම්බන්ධ lobe එක වන්නේ,", a: ["Frontal", "Parietal", "Temporal", "Occipital"], correct: 1, exp: "Parietal Lobe sensory information process කරයි. (Touch, Temperature, Pain)" },
+            { q: "30. ලිම්බික් පද්ධතිය (Limbic System) ප්‍රධාන වශයෙන් සම්බන්ධ වන්නේ,", a: ["Digestion", "Emotion and Memory", "Vision", "Hearing"], correct: 1, exp: "Limbic System emotions, motivation සහ memory සමඟ සම්බන්ධයි." },
+            { q: "31. බිය (Fear) සමඟ වඩාත් සම්බන්ධ brain structure එක වන්නේ,", a: ["Hippocampus", "Amygdala", "Cerebellum", "Thalamus"], correct: 1, exp: "Amygdala fear response සඳහා ප්‍රධාන brain structure එකයි." },
+            { q: "32. මතකය නිර්මාණය (Memory Formation) සමඟ සම්බන්ධ structure එක වන්නේ,", a: ["Amygdala", "Hippocampus", "Pons", "Medulla"], correct: 1, exp: "Hippocampus new memories form කිරීමට වැදගත් වේ." },
+            { q: "33. Homeostasis පාලනය කරන structure එක වන්නේ,", a: ["Hippocampus", "Hypothalamus", "Cerebellum", "Cortex"], correct: 1, exp: "Hypothalamus body balance maintain කරයි. (Temperature, Hunger, Thirst)" },
+            { q: "34. අන්තරස්‍රාවී පද්ධතිය (Endocrine System) මගින් ප්‍රධාන වශයෙන් භාවිතා කරන්නේ,", a: ["Electrical impulses", "Hormones", "Reflexes", "Neurons"], correct: 1, exp: "Endocrine System පණිවිඩ යවන්නේ හෝමෝන මගිනි." },
+            { q: "35. “Master Gland” ලෙස හැඳින්වෙන්නේ,", a: ["Thyroid", "Adrenal", "Pituitary", "Pancreas"], correct: 2, exp: "Pituitary gland අනෙකුත් glands පාලනය කරන නිසා “Master Gland” ලෙස හැඳින්වේ." },
+            { q: "36. Fight-or-Flight response සඳහා වැදගත් hormone එක වන්නේ,", a: ["Serotonin", "GABA", "Adrenaline", "Acetylcholine"], correct: 2, exp: "Adrenaline ශරීරය හදිසි අවස්ථාවන් සඳහා සූදානම් කරයි." },
+            { q: "37. ආතතිය සමඟ ප්‍රධාන වශයෙන් සම්බන්ධ hormone එක වන්නේ,", a: ["Dopamine", "Cortisol", "GABA", "Serotonin"], correct: 1, exp: "Cortisol යනු ප්‍රධාන ආතති හෝමෝනයයි." },
+            { q: "38. Metabolism පාලනය කිරීම සමඟ සම්බන්ධ gland එක වන්නේ,", a: ["Thyroid", "Pituitary", "Adrenal", "Amygdala"], correct: 0, exp: "Thyroid gland මගින් පරිවෘත්තීය ක්‍රියා (metabolism) පාලනය කරයි." },
+            { q: "39. Depression සමඟ බහුලව සම්බන්ධ neurotransmitter imbalance එක වන්නේ,", a: ["Dopamine only", "Low Serotonin", "High GABA", "High Acetylcholine"], correct: 1, exp: "Depression සමඟ low serotonin level බහුලව සම්බන්ධ වේ." },
+            { q: "40. Anxiety සමඟ සම්බන්ධ වන්නේ,", a: ["Low GABA", "High Serotonin", "Low Dopamine", "High Endorphins"], correct: 0, exp: "Low GABA -> brain overactive -> anxiety symptoms." },
+            { q: "41. Addiction සමඟ ප්‍රධාන වශයෙන් සම්බන්ධ pathway එක වන්නේ කුමක්ද?", a: ["Visual pathway", "Reward pathway", "Auditory pathway", "Sensory pathway"], correct: 1, exp: "Addiction, reward pathway එක සමඟ සෘජුවම සම්බන්ධයි." },
+            { q: "42. PTSD සමඟ බහුලව සම්බන්ධ වන්නේ කුමක්ද?", a: ["Amygdala overactivation", "Thyroid imbalance", "Cerebellum damage", "Vision loss"], correct: 0, exp: "PTSD හිදී amygdala අධි-ක්‍රියාකාරී (overactive) වීම බහුලව දක්නට ලැබේ." },
+            { q: "43. Biopsychosocial Model එකේ ඇතුළත් නොවන factor එක වන්නේ කුමක්ද?", a: ["Biological", "Psychological", "Social", "Political"], correct: 3, exp: "Biopsychosocial Model සාධක 3කි: Biological, Psychological, Social." },
+            { q: "44. මොළයේ balance සහ coordination සඳහා වගකිව යුතු කොටස වන්නේ,", a: ["Cerebellum", "Amygdala", "Frontal Lobe", "Hypothalamus"], correct: 0, exp: "Cerebellum මගින් සිරුරේ samabarathawaya සහ samabandheekarana පාලනය කරයි." },
+            { q: "45. Heart rate සහ breathing control සමඟ සම්බන්ධ කොටස වන්නේ,", a: ["Medulla", "Temporal Lobe", "Parietal Lobe", "Hippocampus"], correct: 0, exp: "Medulla මගින් මූලික ජීවන ක්‍රියා (Breathing, Heart Rate) පාලනය කරයි." },
+            { q: "46. Nervous System හි involuntary actions පාලනය කරන්නේ කුමක්ද?", a: ["Somatic System", "Autonomic System", "Motor System", "Sensory System"], correct: 1, exp: "Autonomic System මගින් ස්වයංක්‍රීය ක්‍රියා පාලනය කරයි." },
+            { q: "47. Reward, motivation හා pleasure සමඟ සම්බන්ධ neurotransmitter එක වන්නේ,", a: ["GABA", "Dopamine", "Cortisol", "Serotonin"], correct: 1, exp: "Dopamine යනු Reward chemical එක ලෙස හඳුන්වන ස්නායු සම්ප්‍රේෂකයයි." },
+            { q: "48. Relaxation සහ calmness සමඟ සම්බන්ධ neurotransmitter එක වන්නේ,", a: ["Dopamine", "GABA", "Adrenaline", "Cortisol"], correct: 1, exp: "GABA යනු මොළය සන්සුන් කරන inhibitory neurotransmitter එකකි." },
+            { q: "49. Memory problems සමඟ සම්බන්ධ neurotransmitter එක වන්නේ,", a: ["Acetylcholine", "GABA", "Dopamine", "Endorphins"], correct: 0, exp: "Acetylcholine ඉගෙනීමට සහ මතකයට සම්බන්ධයි." },
+            { q: "50. ජීව විද්‍යාත්මක මනෝවිද්‍යාවේ මූලික අදහස වන්නේ,", a: ["Behaviour is unrelated to biology", "Behaviour has biological basis", "Only environment matters", "Only social factors matter"], correct: 1, exp: "මූලික අදහස වන්නේ මිනිස් චර්යාවන්ට ජීව විද්‍යාත්මක පදනමක් ඇති බවයි." },
+            { q: "51. Neuron එකක signal transmission speed වැඩි කිරීමට සෘජුවම බලපාන්නේ කුමක්ද?", a: ["Dendrites", "Soma", "Myelin Sheath", "Synapse"], correct: 2, exp: "Myelin Sheath මගින් සංඥා ගමන් කිරීමේ වේගය වැඩි කරයි." },
+            { q: "52. පහත කුමක් inhibitory neurotransmitter එකක් වන්නේ,", a: ["Dopamine", "GABA", "Serotonin", "Acetylcholine"], correct: 1, exp: "GABA යනු මොළයේ ක්‍රියාකාරීත්වය මන්දගාමී/සන්සුන් කරන ප්‍රධාන සාධකයකි." },
+            { q: "53. “Fight-or-Flight” response එකකදී පහත කුමක් සිදුවේද?", a: ["Heart rate අඩුවේ", "Digestion වැඩිවේ", "Breathing rate වැඩිවේ", "Body relax වේ"], correct: 2, exp: "මෙහිදී හෘද ස්පන්දනය සහ ශ්වසන වේගය (Breathing rate) ඉහළ යයි." },
+            { q: "54. Memory formation සඳහා වඩාත් වැදගත් brain structure එක කුමක්ද?", a: ["Amygdala", "Hippocampus", "Cerebellum", "Medulla"], correct: 1, exp: "නව මතකයන් ගොඩනැගීමට Hippocampus අත්‍යවශ්‍ය වේ." },
+            { q: "55. Fear response සමඟ වඩාත් සම්බන්ධ brain structure එක කුමක්ද?", a: ["Amygdala", "Thalamus", "Occipital Lobe", "Pons"], correct: 0, exp: "Amygdala යනු මොළයේ බිය හඳුනාගන්නා ප්‍රධාන මධ්‍යස්ථානයයි." },
+            { q: "56. Cortisol secretion වැඩිවීම දිගුකාලීනව සම්බන්ධ වන්නේ,", a: ["Relaxation", "Chronic Stress", "Memory improvement", "Better sleep"], correct: 1, exp: "දීර්ඝකාලීන Cortisol ඉහළ මට්ටම Chronic Stress ඇති කරයි." },
+            { q: "57. Occipital Lobe damage වීමෙන් බොහෝවිට බලපාන්නේ,", a: ["Memory", "Vision", "Hearing", "Emotion"], correct: 1, exp: "Occipital Lobe මගින් පෙනීම (Vision) පාලනය කරයි." },
+            { q: "58. Addiction සමඟ සෘජුවම සම්බන්ධ pathway එක කුමක්ද?", a: ["Pain pathway", "Reward pathway", "Visual pathway", "Reflex pathway"], correct: 1, exp: "ඇබ්බැහි වීම් සෘජුවම මොළයේ Reward pathway එක හා බැඳී පවතී." },
+            { q: "59. Biopsychosocial Model අනුව behaviour explain කිරීමට අවශ්‍ය factors ගණන කීයද?", a: ["2", "3", "4", "5"], correct: 1, exp: "Biopsychosocial Model සාධක 3කි (Bio-Psycho-Social)." }
+        ];
+
+        let currentQuestionIdx = 0;
+        let isSubmitted = false;
+        let candidateName = "";
+        const totalQuizTime = 60 * 60;
+        let timeRemaining = totalQuizTime;
+        let countdown;
+        let activeQuestionsPool = Array.from({length: quizData.length}, (_, i) => i);
+
+        const wrapper = document.getElementById('questions-wrapper');
+        const navGrid = document.getElementById('q-nav-grid');
+
+        quizData.forEach((data, qIdx) => {
+            const card = document.createElement('div');
+            card.className = `quiz-card ${qIdx === 0 ? 'active' : ''}`;
+            card.id = `qcard-${qIdx}`;
+            
+            const qText = document.createElement('div');
+            qText.className = 'question-text';
+            qText.innerText = data.q;
+            card.appendChild(qText);
+
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options-container';
+
+            data.a.forEach((option, oIdx) => {
+                const label = document.createElement('label');
+                label.className = 'option-label';
+                label.id = `label-${qIdx}-${oIdx}`;
+
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = `question-${qIdx}`;
+                input.value = oIdx;
+                input.onchange = () => markAsAnswered(qIdx);
+
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(option));
+                optionsDiv.appendChild(label);
+            });
+            card.appendChild(optionsDiv);
+
+            const expDiv = document.createElement('div');
+            expDiv.className = 'explanation';
+            expDiv.id = `exp-${qIdx}`;
+            expDiv.innerHTML = `<strong>පිළිතුර සහ පැහැදිලි කිරීම:</strong> ${data.exp}`;
+            card.appendChild(expDiv);
+            wrapper.appendChild(card);
+
+            const navBtn = document.createElement('button');
+            navBtn.type = 'button';
+            navBtn.className = `q-nav-btn ${qIdx === 0 ? 'active' : ''}`;
+            navBtn.id = `navbtn-${qIdx}`;
+            navBtn.innerText = qIdx + 1;
+            navBtn.onclick = () => jumpToQuestion(qIdx);
+            navGrid.appendChild(navBtn);
+        });
+
+        function startQuiz() {
+            const nameInput = document.getElementById('candidate-name').value.trim();
+            if(!nameInput) {
+                alert("කරුණාකර ඉදිරියට යාමට ඔබගේ නම ඇතුළත් කරන්න.");
+                return;
+            }
+            candidateName = nameInput;
+            document.getElementById('reg-box').style.display = 'none';
+            document.getElementById('quiz-area').style.display = 'block';
+            document.getElementById('timer-box').style.display = 'inline-block';
+            
+            startTimer();
+        }
+
+        function startTimer() {
+            const timerElement = document.getElementById('timer');
+            countdown = setInterval(() => {
+                let mins = Math.floor(timeRemaining / 60);
+                let secs = timeRemaining % 60;
+                timerElement.textContent = `${mins < 10 ? '0'+mins : mins}:${secs < 10 ? '0'+secs : secs}`;
+                if (timeRemaining <= 0) {
+                    clearInterval(countdown);
+                    autoSubmitOnTimeOut();
+                }
+                timeRemaining--;
+            }, 1000);
+        }
+
+        function jumpToQuestion(idx) {
+            const currentActiveCard = document.querySelector('.quiz-card.active');
+            if (currentActiveCard) currentActiveCard.classList.remove('active');
+            const activeNav = document.querySelector('.q-nav-btn.active');
+            if (activeNav) activeNav.classList.remove('active');
+            
+            currentQuestionIdx = idx;
+            document.getElementById(`qcard-${idx}`).classList.add('active');
+            document.getElementById(`navbtn-${idx}`).classList.add('active');
+            updateControls();
+        }
+
+        function changeQuestion(step) {
+            let currentPoolIdx = activeQuestionsPool.indexOf(currentQuestionIdx);
+            let newPoolIdx = currentPoolIdx + step;
+            if (newPoolIdx >= 0 && newPoolIdx < activeQuestionsPool.length) {
+                jumpToQuestion(activeQuestionsPool[newPoolIdx]);
+            }
+        }
+
+        function markAsAnswered(qIdx) {
+            if (!isSubmitted) {
+                const btn = document.getElementById(`navbtn-${qIdx}`);
+                btn.classList.add('answered');
+                btn.classList.remove('unanswered-alert');
+            }
+        }
+
+        function updateControls() {
+            let currentPoolIdx = activeQuestionsPool.indexOf(currentQuestionIdx);
+            document.getElementById('prev-btn').disabled = (currentPoolIdx <= 0);
+            const nextBtn = document.getElementById('next-btn');
+            const submitBtn = document.getElementById('submit-btn');
+
+            if (isSubmitted) {
+                nextBtn.style.display = (currentQuestionIdx === quizData.length - 1) ? 'none' : 'block';
+                submitBtn.style.display = 'none';
+            } else {
+                if (currentPoolIdx === activeQuestionsPool.length - 1) {
+                    nextBtn.style.display = 'none';
+                    submitBtn.style.display = 'block';
+                } else {
+                    nextBtn.style.display = 'block';
+                    submitBtn.style.display = 'none';
+                }
+            }
+        }
+
+        function autoSubmitOnTimeOut() {
+            alert("කාලය අවසන් විය!");
+            isSubmitted = true; 
+            processResults();
+        }
+
+        function submitQuiz(event) {
+            event.preventDefault();
+            let missingQuestions = [];
+            quizData.forEach((_, qIdx) => {
+                const selected = document.querySelector(`input[name="question-${qIdx}"]:checked`);
+                if (!selected) {
+                    missingQuestions.push(qIdx);
+                    document.getElementById(`navbtn-${qIdx}`).classList.add('unanswered-alert');
+                }
+            });
+
+            if (missingQuestions.length > 0) {
+                activeQuestionsPool = missingQuestions;
+                document.getElementById('validation-alert').style.display = 'block';
+                quizData.forEach((_, qIdx) => {
+                    const navBtn = document.getElementById(`navbtn-${qIdx}`);
+                    navBtn.style.opacity = !missingQuestions.includes(qIdx) ? "0.3" : "1";
+                });
+                jumpToQuestion(activeQuestionsPool[0]);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+
+            document.getElementById('validation-alert').style.display = 'none';
+            clearInterval(countdown);
+            isSubmitted = true;
+            processResults();
+        }
+
+        function processResults() {
+            document.getElementById('timer-box').innerHTML = "Quiz එක අවසන් කරන ලදී.";
+            activeQuestionsPool = Array.from({length: quizData.length}, (_, i) => i);
+            quizData.forEach((_, qIdx) => {
+                document.getElementById(`navbtn-${qIdx}`).style.opacity = "1";
+            });
+
+            let timeTakenSeconds = totalQuizTime - timeRemaining;
+            let takenMins = Math.floor(timeTakenSeconds / 60);
+            let takenSecs = timeTakenSeconds % 60;
+            let formattedTime = `${takenMins} min ${takenSecs} sec`;
+            document.getElementById('time-taken-display').innerText = `ඔබට ගත වූ කාලය: විනාඩි ${takenMins} තත්පර ${takenSecs}`;
+
+            let totalScore = 0;
+            let answersLog = [];
+
+            quizData.forEach((data, qIdx) => {
+                const selected = document.querySelector(`input[name="question-${qIdx}"]:checked`);
+                const correctIdx = data.correct;
+                document.querySelectorAll(`input[name="question-${qIdx}"]`).forEach(i => i.disabled = true);
+                document.getElementById(`exp-${qIdx}`).style.display = 'block';
+                document.getElementById(`label-${qIdx}-${correctIdx}`).classList.add('correct');
+
+                const navBtn = document.getElementById(`navbtn-${qIdx}`);
+                navBtn.classList.remove('answered', 'active', 'unanswered-alert');
+
+                let studentAnsText = "Not Answered";
+                let questionStatus = "Incorrect";
+
+                if (selected) {
+                    const userAns = parseInt(selected.value);
+                    studentAnsText = data.a[userAns];
+
+                    if (userAns === correctIdx) {
+                        totalScore++;
+                        navBtn.classList.add('correct-nav');
+                        questionStatus = "Correct";
+                    } else {
+                        document.getElementById(`label-${qIdx}-${userAns}`).classList.add('incorrect');
+                        navBtn.classList.add('incorrect-nav');
+                    }
+                } else {
+                    navBtn.classList.add('incorrect-nav');
+                }
+
+                answersLog.push({
+                    userAnswer: studentAnsText,
+                    status: questionStatus
+                });
+            });
+
+            document.getElementById('score-display').innerText = `ලකුණු: ${totalScore} / 59`;
+            const feedback = document.getElementById('feedback-text');
+            let pct = (totalScore / 59) * 100;
+            if(pct >= 75) feedback.innerText = "විශිෂ්ටයි! ඔබ විභාගයට ඉතා හොඳින් සූදානම්.";
+            else if(pct >= 50) feedback.innerText = "හොඳයි! තවත් ටිකක් පුහුණු වන්න.";
+            else feedback.innerText = "කරුණාකර පාඩම් කොටස් නැවත කියවා උත්සාහ කරන්න.";
+
+            document.getElementById('result-summary').style.display = 'block';
+            document.getElementById('next-btn').style.display = 'block';
+            document.getElementById('submit-btn').style.display = 'none';
+            
+            jumpToQuestion(0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            sendDataToGoogleSheet(candidateName, `${totalScore}/59`, formattedTime, answersLog);
+        }
+
+        function sendDataToGoogleSheet(name, score, timeTaken, answersDump) {
+            if(!WEB_APP_URL || WEB_APP_URL.includes("මෙතැනට")) {
+                console.log("Web App URL has not been provided yet.");
+                return;
+            }
+            
+            const payload = {
+                name: name,
+                score: score,
+                timeTaken: timeTaken,
+                answersDump: answersDump
+            };
+
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                console.log("Data successfully processed to Google Sheet.");
+            })
+            .catch(error => {
+                console.error("Error logging results:", error);
+            });
+        }
+    </script>
+</body>
+</html>
